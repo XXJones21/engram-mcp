@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "engram": {
+      "command": "python",
+      "args": ["-m", "engram_mcp.server", "--transport", "stdio"],
+      "env": {
+        "ENGRAM_TRANSPORT": "http",
+        "ENGRAM_BASE_URL": "http://<home-LAN-IP>:8765",
+        "ENGRAM_PROFILE": "remote"
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "engram": {
+      "command": "python",
+      "args": ["-m", "engram_mcp.server", "--transport", "stdio"],
+      "env": {
+        "ENGRAM_TRANSPORT": "local",
+        "ENGRAM_PROFILE": "selene"
+      }
+    }
+  }
+}

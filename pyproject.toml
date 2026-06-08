@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "engram-mcp"
+version = "0.1.0"
+description = "Mount the Engram second brain as an MCP shard: a standalone always-on Python service wrapping the Valinor Engram seams (engram_writer / brain_sync / selene_review) over stdio + http"
+requires-python = ">=3.10"
+dependencies = [
+  "httpx>=0.27",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "pytest-asyncio>=0.23"]
+mcp = ["fastmcp>=3"]
+http = ["uvicorn>=0.30", "starlette>=0.37"]
+
+[project.scripts]
+engram-mcp = "engram_mcp.server:main"
+engram-organize = "engram_mcp.organize_cli:main"
+
+[tool.setuptools.packages.find]
+include = ["engram_mcp*"]

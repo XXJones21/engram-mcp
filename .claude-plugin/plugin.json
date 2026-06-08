@@ -1,0 +1,19 @@
+{
+  "name": "engram-mcp",
+  "version": "0.1.0",
+  "description": "Mount the Engram second brain as an MCP shard: 8 tools (recall, search, list_projects, sync_status, append, create, promote_fact, organize) over a standalone always-on Python service that wraps the Valinor Engram seams in-process. stdio for local Claude Code, http for the LAN (MacBook + Hermes). Path-safe and single-writer serialized server-side.",
+  "author": {
+    "name": "Joshua Jones",
+    "url": "https://github.com/XXJones21"
+  },
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "mcp",
+    "engram",
+    "second-brain",
+    "memory",
+    "valinor",
+    "knowledge-base"
+  ]
+}
