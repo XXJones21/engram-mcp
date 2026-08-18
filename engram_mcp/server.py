@@ -23,6 +23,7 @@ import argparse
 import asyncio
 import json
 import os
+import sys
 from typing import Any
 
 from fastmcp import FastMCP
@@ -317,8 +318,10 @@ def main() -> None:
     )
     args, _ = parser.parse_known_args()
 
+    # stderr, never stdout: on the stdio transport stdout is the MCP protocol
+    # stream and any stray line can break strict clients.
     print(f"[engram-mcp] profile={_ACTIVE_PROFILE} "
-          f"tools={sorted(_ALLOWED_TOOLS)}", flush=True)
+          f"tools={sorted(_ALLOWED_TOOLS)}", flush=True, file=sys.stderr)
 
     if args.transport == "stdio":
         mcp.run(transport="stdio")

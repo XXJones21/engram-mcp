@@ -30,6 +30,8 @@ _INDEX_GLOBS = (
     "Projects/**/*.md",
     "Thoughts/**/*.md",
     "Reviews/**/*.md",
+    "Research/**/*.md",
+    "Ideas/**/*.md",
     "*.md",
 )
 _EXCLUDE_PARTS = {".git", "node_modules", ".fennec"}

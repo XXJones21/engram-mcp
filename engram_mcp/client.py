@@ -347,6 +347,28 @@ class EngramClient:
                     })
             project_hits.sort(key=lambda r: -r["hits"])
             results.extend(project_hits[:4])
+            # Full project bodies + digests (knowledge-base.md) + sub-project
+            # claude.md via the FTS index (2026-06-13). load_engram_context above
+            # only sees the truncated TOP of each project's claude.md, so deep
+            # content and non-claude.md project files (e.g. the wiki-mirror
+            # knowledge-base.md digests) were unsearchable. Dedup by source so a
+            # project already surfaced via its context load is not double-listed.
+            if terms:
+                from . import fts as _fts
+
+                seen_proj = {r["source"] for r in project_hits}
+                for h in _fts.search(root, query, path_prefixes=("Projects/",),
+                                     limit=6):
+                    if h["source"] in seen_proj:
+                        continue
+                    seen_proj.add(h["source"])
+                    results.append({
+                        "scope": "projects",
+                        "source": h["source"],
+                        "snippet": h["snippet"],
+                        "date": "",
+                        "hits": int(max(1, round(-h["rank"] * 4))),
+                    })
         if "knowledge" in scope:
             # Background notes OUTSIDE the three classic scopes: career history
             # and area notes. PRIMARY backend (2026-06-07): the FTS5/BM25 index
@@ -358,7 +380,8 @@ class EngramClient:
             from . import fts as _fts
 
             fts_hits = _fts.search(
-                root, query, path_prefixes=("Career/", "Areas/"),
+                root, query,
+                path_prefixes=("Career/", "Areas/", "Research/", "Ideas/"),
                 limit=max(int(limit), 6),
             )
             if fts_hits:
@@ -382,7 +405,8 @@ class EngramClient:
                 # meta-ise.md held the "what did I work on at Meta" answer
                 # while only Career/claude.md (the summary layer) was searched.
                 kfiles: list[Path] = []
-                for pattern in ("Career/**/*.md", "Areas/**/*.md"):
+                for pattern in ("Career/**/*.md", "Areas/**/*.md",
+                                "Research/**/*.md", "Ideas/**/*.md"):
                     kfiles.extend(root.glob(pattern))
                 for kf in kfiles:
                     if not kf.is_file():
