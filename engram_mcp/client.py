@@ -328,6 +328,22 @@ class EngramClient:
                         "date": "",
                         "hits": int(max(1, round(-h["rank"] * 4))),
                     })
+        if "reviews" in scope and terms:
+            # Selene's daily/weekly digests (2026-08-19): the reviews shelf is
+            # what answers "what happened on <day>" -- it was indexed by the
+            # FTS globs but reachable by no scope, so recall could never
+            # surface it.
+            from . import fts as _fts
+
+            for h in _fts.search(root, query, path_prefixes=("Reviews/",),
+                                 limit=4):
+                results.append({
+                    "scope": "reviews",
+                    "source": h["source"],
+                    "snippet": h["snippet"],
+                    "date": "",
+                    "hits": int(max(1, round(-h["rank"] * 4))),
+                })
         if "projects" in scope:
             # Keep only the best few projects so any-match noise cannot flood
             # the list in scope order and crowd out better hits downstream.
