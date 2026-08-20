@@ -460,6 +460,28 @@ class EngramClient:
                             "date": "",
                             "hits": hits,
                         })
+        # Date backfill (2026-08-20): an undated snippet reads as current to
+        # the consuming model, which is how months-old project notes get
+        # presented as recent work. Every result carries the best date the
+        # source offers: the slug date for Thoughts/Reviews, the file mtime
+        # for project and knowledge notes. Facts stay undated (no source day).
+        _slug_date = _re.compile(r"\b\d{4}-\d{2}-\d{2}\b")
+        for r in results:
+            if r.get("date"):
+                continue
+            src = str(r.get("source") or "")
+            m = _slug_date.search(src)
+            if m:
+                r["date"] = m.group(0)
+                continue
+            if r.get("scope") in ("projects", "knowledge"):
+                try:
+                    f = root / src
+                    if f.is_file():
+                        r["date"] = datetime.fromtimestamp(
+                            f.stat().st_mtime).date().isoformat()
+                except OSError:
+                    pass
         # Rank by relevance (distinct term hits) BEFORE truncating, so a
         # strong knowledge/thought hit is never crowded out by weak any-match
         # results that happened to append earlier. Stable: ties keep scope
